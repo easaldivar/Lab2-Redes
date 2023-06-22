@@ -1,6 +1,7 @@
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
+const { Console } = require('console');
 const port = 8080;
 
 const mimeTypes = {
@@ -57,7 +58,6 @@ const server = net.createServer((socket) => {
                 for (let page of pages) {
                     if (request.path === '/' + page) {
                         pageFound = true;
-    
                         if (request.file) {
                             console.info(`REQUEST FILE ${request.file}`)
                             const filePath = path.join(pagesDir, page, request.file);
@@ -69,8 +69,9 @@ const server = net.createServer((socket) => {
                                 responseHeaders = `HTTP/1.1 200 OK\r\nContent-Type: ${contentType}\r\n\r\n`;
                                 responseData = fileData;
                             } catch (err) {
-                                responseHeaders = 'HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\n';
-                                responseData = 'Internal Server Error\r\n';
+                                responseHeaders = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n';
+                                responseData = 'Not Found\r\n';
+                                pageFound = false;
                             }
                         } else {
                             try {
@@ -78,8 +79,9 @@ const server = net.createServer((socket) => {
                                 responseHeaders = 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n';
                                 responseData = indexData;
                             } catch (err) {
-                                responseHeaders = 'HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\n';
-                                responseData = 'Internal Server Error\r\n';
+                                responseHeaders = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n';
+                                responseData = 'Not Found\r\n';
+                                pageFound = false;
                             }
                         }
                         break;
