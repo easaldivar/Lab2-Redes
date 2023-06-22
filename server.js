@@ -24,6 +24,7 @@ const server = net.createServer((socket) => {
         // Verifica version HTTP.
         if (request.protocol !== 'HTTP/1.1') {
             socket.write('HTTP/1.1 505 HTTP Version Not Supported\r\nContent-Type: text/plain\r\n\r\nHTTP Version Not Supported\r\n');
+            socket.end();
         // Verifica metodo.
         } else if (request.method === 'GET') {
             let pagesDir = path.join(__dirname, 'pages');
