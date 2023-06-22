@@ -30,7 +30,11 @@ const server = net.createServer((socket) => {
             let responseData = null;
             let responseHeaders = 'HTTP/1.1 200 OK\r\n';
 
-            
+            if (request.path === '/pagina1') { 
+                let responseHeaders = 'HTTP/1.1 301 Moved Permanently\r\nLocation: /index\r\n\r\n';
+                socket.write(responseHeaders);
+                socket.end();
+            }
             if (request.path === '/') request.path = '/index';
             if (request.path.endsWith('/favicon.ico')) {
                 let faviconData = fs.readFileSync(path.join(__dirname, 'favicon.ico'));
@@ -72,8 +76,9 @@ const server = net.createServer((socket) => {
             }
     
             if (!pageFound) {
-                responseHeaders = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n';
-                responseData = 'Not Found\r\n';
+                let indexData = fs.readFileSync(path.join(pagesDir, "not-found", 'index.html'), 'utf8');
+                responseHeaders = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/html\r\n\r\n';
+                responseData = indexData;
             }
     
             socket.write(responseHeaders);
