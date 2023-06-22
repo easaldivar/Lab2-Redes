@@ -20,18 +20,29 @@ const server = net.createServer((socket) => {
         const request = parseHTTPRequest(data.toString());
     
         console.log(request);
-    
+        
+        // Verifica version HTTP.
         if (request.protocol !== 'HTTP/1.1') {
-            socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nBad Request\r\n');
+            socket.write('HTTP/1.1 505 HTTP Version Not Supported\r\nContent-Type: text/plain\r\n\r\nHTTP Version Not Supported\r\n');
+        // Verifica metodo.
         } else if (request.method === 'GET') {
             let pagesDir = path.join(__dirname, 'pages');
             let pages = fs.readdirSync(pagesDir);
             let pageFound = false;
             let responseData = null;
             let responseHeaders = 'HTTP/1.1 200 OK\r\n';
-
-            
+            // Si URL no comienza con '/', error 400.
+            if(request.path.startsWith('/') === false) {
+                socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nBad Request\r\n');
+            }
             if (request.path === '/') request.path = '/index';
+            /*
+            if(request.path.endsWith('/') === false) {
+                console.debug(`Redirecting ${request.path} to ${request.path}/---------------------------------------------------------------------`)
+                socket.write('HTTP/1.1 301 Moved Permanently\r\n');
+                // Redirige a la misma URL pero con '/' al final.
+                socket.write(`Location: ${request.path}/\r\n`);
+            }*/
             if (request.path.endsWith('/favicon.ico')) {
                 let faviconData = fs.readFileSync(path.join(__dirname, 'favicon.ico'));
                 responseHeaders = 'HTTP/1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n';
@@ -72,6 +83,8 @@ const server = net.createServer((socket) => {
             }
     
             if (!pageFound) {
+
+                // --------------------- AGREGAR ERROR 301 ---------------------
                 responseHeaders = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\n\r\n';
                 responseData = 'Not Found\r\n';
             }
@@ -81,8 +94,9 @@ const server = net.createServer((socket) => {
                 socket.write(responseData);
             }
             socket.end();
-        } else if (request.method === 'BREW') {
+        // Metodo BREW con codigo 418.
             socket.write("HTTP/1.1 418 I'm a teapot\r\nContent-Type: text/plain\r\n\r\nI'm a teapot, I cannot brew coffee\r\n");
+        // Si no es GET o BREW, codigo 405.
         } else {
             socket.write('HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\nMethod Not Allowed\r\n');
             socket.end();
