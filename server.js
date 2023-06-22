@@ -97,10 +97,14 @@ const server = net.createServer((socket) => {
                 socket.write(responseData);
             }
             socket.end();
-        // Metodo BREW con codigo 418.
-            socket.write("HTTP/1.1 418 I'm a teapot\r\nContent-Type: text/plain\r\n\r\nI'm a teapot, I cannot brew coffee\r\n");
+        
         // Si no es GET o BREW, codigo 405.
         } else {
+            if (request.method === 'BREW') {
+                // Metodo BREW con codigo 418.
+                socket.write("HTTP/1.1 418 I'm a teapot\r\nContent-Type: text/plain\r\n\r\nI'm a teapot, I cannot brew coffee\r\n");
+                socket.end();            
+            } else
             socket.write('HTTP/1.1 405 Method Not Allowed\r\nContent-Type: text/plain\r\n\r\nMethod Not Allowed\r\n');
             socket.end();
         }
