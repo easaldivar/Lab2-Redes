@@ -1,20 +1,21 @@
 # Lab 2: Servidor HTTP simple
 ---
+## Caracteristicas
+- Servidor HTTP simple que responde a peticiones GET
+- Servidor maneja codigos de error 400, 404, 405 y 500, junto a codigo de no-error 200.
+- Tipos de medio soportados: text/html, text/plain, text/css, text/javascript, image/png, image/jpeg.
 
-Para ejecutar el código se escribe en la terminal: node server.js
+## Uso del programa
+### Instalacion de dependencias necesarias
+Basta con escribir:
+```
+npm install
+```
 
-Luego en el buscador de google para buscar la página se escribe: http://localhost:8080
-
-Para verificar que los códigos de respuesta funcionan correctamente en Powershell, primero que todo, hay que asegurarse de que se esté ejecutando la página y en otro terminal escribir los siguientes comandos para cada caso:
-
-200 OK: Invoke-WebRequest -Uri "http://localhost:8080/"
-301 Moved Permanently: Invoke-WebRequest -Uri "http://localhost:8080/moved" -MaximumRedirection 0
-400 Bad Request: Invoke-WebRequest -Uri "http://localhost:8080/" -Method POST
-404 Not Found: Invoke-WebRequest -Uri "http://localhost:8080/notfound"
-405 Method Not Allowed: Invoke-WebRequest -Uri "http://localhost:8080/invalid" -Method POST
-505 HTTP Version Not Supported: Invoke-WebRequest -Uri "http://localhost:8080/" -Method "InvalidMethod"
-
-
-
-
-
+### Ejecucion del servidor
+El servidor corre por defecto en el localhost, puerto 8080.
+Para ejecutarlo, basta con escribir:
+```
+npm run server
+```
+http://localhost:8080
