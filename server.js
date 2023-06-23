@@ -1,7 +1,6 @@
 const net = require('net');
 const fs = require('fs');
 const path = require('path');
-const { Console } = require('console');
 const port = 8080;
 
 const mimeTypes = {
@@ -44,19 +43,6 @@ const server = net.createServer((socket) => {
                 socket.end();
             }
             if (request.path === '/') request.path = '/index/';
-
-            
-            // NO FUNCAA AAAA
-            // if(!request.path.endsWith('/') && request.file !== '/' && request.file === '' && request.file) {
-            //     let potentialDirPath = path.join(pagesDir, request.path);
-            //     if (fs.existsSync(potentialDirPath) && fs.lstatSync(potentialDirPath).isDirectory()) {
-            //         console.debug(`Redirecting ${request.path} to ${request.path}/`);
-            //         let responseHeaders = `HTTP/1.1 301 Moved Permanently\r\nLocation: ${request.path}/\r\n\r\n`;
-            //         socket.write(responseHeaders);
-            //         socket.end();
-            //         return;
-            //     }
-            // }
 
 
             if (request.path.endsWith('/favicon.ico')) {
