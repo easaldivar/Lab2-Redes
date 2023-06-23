@@ -36,27 +36,41 @@ const server = net.createServer((socket) => {
             // Si URL no comienza con '/', error 400.
             if(request.path.startsWith('/') === false) {
                 socket.write('HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\n\r\nBad Request\r\n');
+                socket.end();
+            }
             if (request.path === '/pagina1') { 
                 let responseHeaders = 'HTTP/1.1 301 Moved Permanently\r\nLocation: /index\r\n\r\n';
                 socket.write(responseHeaders);
                 socket.end();
-            }}
-            if (request.path === '/') request.path = '/index';
-            /*
-            if(request.path.endsWith('/') === false) {
-                console.debug(`Redirecting ${request.path} to ${request.path}/---------------------------------------------------------------------`)
-                socket.write('HTTP/1.1 301 Moved Permanently\r\n');
-                // Redirige a la misma URL pero con '/' al final.
-                socket.write(`Location: ${request.path}/\r\n`);
-            }*/
+            }
+            if (request.path === '/') request.path = '/index/';
+
+            
+            // NO FUNCAA AAAA
+            // if(!request.path.endsWith('/') && request.file !== '/' && request.file === '' && request.file) {
+            //     let potentialDirPath = path.join(pagesDir, request.path);
+            //     if (fs.existsSync(potentialDirPath) && fs.lstatSync(potentialDirPath).isDirectory()) {
+            //         console.debug(`Redirecting ${request.path} to ${request.path}/`);
+            //         let responseHeaders = `HTTP/1.1 301 Moved Permanently\r\nLocation: ${request.path}/\r\n\r\n`;
+            //         socket.write(responseHeaders);
+            //         socket.end();
+            //         return;
+            //     }
+            // }
+
+
             if (request.path.endsWith('/favicon.ico')) {
                 let faviconData = fs.readFileSync(path.join(__dirname, 'favicon.ico'));
                 responseHeaders = 'HTTP/1.1 200 OK\r\nContent-Type: image/x-icon\r\n\r\n';
                 responseData = faviconData;
                 pageFound = true;
-            } else {
+                socket.write(responseHeaders);
+                socket.write(responseData);
+                socket.end();
+                return;
+            }else {
                 for (let page of pages) {
-                    if (request.path === '/' + page) {
+                    if (request.path === '/' + page || request.path === '/' + page + '/') {
                         pageFound = true;
                         if (request.file) {
                             console.info(`REQUEST FILE ${request.file}`)
